@@ -1,12 +1,9 @@
 import React, { useState, useContext } from "react";
-import "./Login_v1/css/main.css";
-import "./Login_v1/css/util.css";
-import "../assets/css/animate.css";
-import imgLogin from "./Login_v1/images/img-01.png";
+import imgLogin from "./images/img-01.png";
 import { withRouter, Redirect } from "react-router";
 import App from "../auth/auth";
 import { AuthContext } from "../components/Auth";
-
+import { Link } from "react-router-dom";
 const Login = ({ history }) => {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
@@ -15,7 +12,7 @@ const Login = ({ history }) => {
     return email.length > 0 && password.length > 0;
   };
 
-  const handleLogin = async e => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     try {
       await App.auth().signInWithEmailAndPassword(email, password);
@@ -53,7 +50,7 @@ const Login = ({ history }) => {
                 placeholder="Correo Electrónico"
                 value={email}
                 autoComplete={"none"}
-                onChange={e => {
+                onChange={(e) => {
                   setEmail(e.target.value);
                 }}
               />
@@ -73,7 +70,7 @@ const Login = ({ history }) => {
                 name="pass"
                 placeholder="Contraseña"
                 value={password}
-                onChange={e => {
+                onChange={(e) => {
                   setPassword(e.target.value);
                 }}
                 autoComplete={"current-password"}
@@ -98,13 +95,24 @@ const Login = ({ history }) => {
             </div>
 
             <div className="text-center p-t-136">
-              <a className="txt2" href="/register">
-                Registrarte
-                <i
-                  className="fa fa-long-arrow-right m-l-5"
-                  aria-hidden="true"
-                ></i>
-              </a>
+              <Link to="/register">
+                <a className="txt2 ml-3 mr-3" href="/register">
+                  Registrarte
+                  <i
+                    className="fa fa-long-arrow-right m-l-5"
+                    aria-hidden="true"
+                  ></i>
+                </a>
+              </Link>
+              <Link to="/">
+                <a className="txt2 ml-3 mr3" href="/">
+                  Inicio
+                  <i
+                    className="fa fa-long-arrow-right m-l-15"
+                    aria-hidden="true"
+                  ></i>
+                </a>
+              </Link>
             </div>
           </form>
         </div>

@@ -1,9 +1,8 @@
-import React, { useState, useContext } from "react";
-import "./Login_v1/css/main.css";
-import "./Login_v1/css/util.css";
+import React, { useContext } from "react";
+import "./css/main.css";
+import "./css/util.css";
 import "../assets/css/animate.css";
-import imgLogin from "./Login_v1/images/img-01.png";
-import { withRouter, Redirect } from "react-router";
+import { withRouter } from "react-router";
 import { Link } from "react-router-dom";
 import App from "../auth/auth";
 import { AuthContext } from "../components/Auth";
@@ -20,7 +19,7 @@ const Home = ({ history }) => {
           style={{
             backgroundColor: "black",
             minHeight: "80vh",
-            width: "100%"
+            width: "100%",
           }}
         >
           <div className="d-flex justify-content-around px-4 text-center w-100">

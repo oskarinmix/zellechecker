@@ -1,11 +1,10 @@
 import React, { useState, useContext } from "react";
-import "./Login_v1/css/main.css";
-import "./Login_v1/css/util.css";
-import "../assets/css/animate.css";
-import imgLogin from "./Login_v1/images/img-01.png";
+import imgLogin from "./images/img-01.png";
 import { withRouter, Redirect } from "react-router";
+import { Link } from "react-router-dom";
 import App from "../auth/auth";
 import { AuthContext } from "../components/Auth";
+import Swal from "sweetalert2";
 const Register = ({ history }) => {
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
@@ -13,17 +12,41 @@ const Register = ({ history }) => {
 
   const validateForm = () => {
     return (
-      email.length > 0 && password.length > 0 && password === passwordConfirm
+      email.length > 0 && password.length > 0 && passwordConfirm.length > 0
     );
   };
-
-  const handleRegister = async e => {
+  const validateEmail = () => {
+    const patterns = {
+      email: /^[a-z\d.-_]+@[a-z\d\-_]+\.[a-z]{2,6}(\.[a-z]{2,6})?$/,
+      amount: /^[\d]+$/,
+    };
+    return patterns.email.test(email);
+  };
+  const handleRegister = async (e) => {
     e.preventDefault();
-    try {
-      await App.auth().createUserWithEmailAndPassword(email, password);
-      history.push("/Dashboard");
-    } catch (error) {
-      alert(error);
+    const validEmail = validateEmail();
+    const samePassword = password === passwordConfirm;
+    if (!validEmail || !samePassword) {
+      Swal.fire(
+        (!validEmail ? "Escribe un Correo Válido" : "") +
+          (!samePassword ? " Repite la misma contraseña" : ""),
+        "Datos de Registro Incorrectos",
+        "error"
+      );
+    } else {
+      try {
+        await App.auth().createUserWithEmailAndPassword(email, password);
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "Registro Exitoso",
+          showConfirmButton: false,
+          timer: 1000,
+        });
+        history.push("/Dashboard");
+      } catch (error) {
+        Swal.fire("Por favor verifica los datos enviados!", error, "error");
+      }
     }
   };
   //////////////////////////////////
@@ -56,8 +79,8 @@ const Register = ({ history }) => {
                 name="email"
                 placeholder="Correo Electrónico"
                 value={email}
-                autoComplete={"none"}
-                onChange={e => {
+                autoComplete={"off"}
+                onChange={(e) => {
                   setEmail(e.target.value);
                 }}
               />
@@ -77,10 +100,10 @@ const Register = ({ history }) => {
                 name="pass"
                 placeholder="Contraseña"
                 value={password}
-                onChange={e => {
+                autoComplete={"off"}
+                onChange={(e) => {
                   setPassword(e.target.value);
                 }}
-                autoComplete={"current-password"}
               />
               <span className="focus-input100"></span>
               <span className="symbol-input100">
@@ -95,12 +118,12 @@ const Register = ({ history }) => {
                 className="input100"
                 type="password"
                 name="passConfirm"
+                autoComplete={"off"}
                 placeholder="Repetir Contraseña"
                 value={passwordConfirm}
-                onChange={e => {
+                onChange={(e) => {
                   setPasswordConfirm(e.target.value);
                 }}
-                autoComplete={"current-password"}
               />
               <span className="focus-input100"></span>
               <span className="symbol-input100">
@@ -114,13 +137,24 @@ const Register = ({ history }) => {
               </button>
             </div>
             <div className="text-center p-t-136">
-              <a className="txt2" href="/login">
-                Inicia Sesión
-                <i
-                  className="fa fa-long-arrow-right m-l-5"
-                  aria-hidden="true"
-                ></i>
-              </a>
+              <Link to="/login">
+                <a className="txt2 ml-3 mr-3" href="/register">
+                  Iniciar Sesiòn
+                  <i
+                    className="fa fa-long-arrow-right m-l-5"
+                    aria-hidden="true"
+                  ></i>
+                </a>
+              </Link>
+              <Link to="/">
+                <a className="txt2 ml-3 mr3" href="/">
+                  Inicio
+                  <i
+                    className="fa fa-long-arrow-right m-l-15"
+                    aria-hidden="true"
+                  ></i>
+                </a>
+              </Link>
             </div>
           </form>
         </div>
