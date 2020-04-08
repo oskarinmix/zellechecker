@@ -4,6 +4,7 @@ import { withRouter, Redirect } from "react-router";
 import App from "../auth/auth";
 import { AuthContext } from "../components/Auth";
 import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
 const Login = ({ history }) => {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
@@ -12,13 +13,26 @@ const Login = ({ history }) => {
     return email.length > 0 && password.length > 0;
   };
 
+  const validateEmail = () => {
+    const patterns = {
+      email: /^[a-z\d.-_]+@[a-z\d\-_]+\.[a-z]{2,6}(\.[a-z]{2,6})?$/,
+      amount: /^[\d]+$/,
+    };
+    return patterns.email.test(email);
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
-    try {
-      await App.auth().signInWithEmailAndPassword(email, password);
-      history.push("/dashboard");
-    } catch (error) {
-      alert(error);
+    const validEmail = validateEmail();
+    if (validEmail) {
+      try {
+        await App.auth().signInWithEmailAndPassword(email, password);
+        history.push("/dashboard");
+      } catch (error) {
+        Swal.fire("Correo o Password Incorrecto", error, "error");
+      }
+    } else {
+      Swal.fire("Escribe un Correo Válido", "Verifica tus datos", "error");
     }
   };
 
