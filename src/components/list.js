@@ -41,7 +41,7 @@ const Form = () => {
         <span className="login100-form-title mt-5">Lista de Transacciones</span>
         {!loading && transactions ? (
           transactions.length > 0 ? (
-            <table class="table table-dark table-striped">
+            <table className="table table-dark table-striped">
               <thead>
                 <tr>
                   <th scope="col">Referencia</th>
@@ -61,11 +61,11 @@ const Form = () => {
                       <td>{t.amount}$</td>
                       <td>
                         {t.status === "verified" ? (
-                          <span class="badge badge-success"> Verificada </span>
+                          <span className="badge badge-success"> Verificada </span>
                         ) : t.status === "unverified" ? (
-                          <span class="badge badge-warning">Pendiente</span>
+                          <span className="badge badge-warning">Pendiente</span>
                         ) : (
-                          <span class="badge badge-danger">Rechazada</span>
+                          <span className="badge badge-danger">Rechazada</span>
                         )}
                       </td>
                     </tr>

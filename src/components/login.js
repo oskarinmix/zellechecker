@@ -110,22 +110,22 @@ const Login = ({ history }) => {
 
             <div className="text-center p-t-136">
               <Link to="/register">
-                <a className="txt2 ml-3 mr-3" href="/register">
+                <span className="txt2 ml-3 mr-3" href="/register">
                   Registrarte
                   <i
                     className="fa fa-long-arrow-right m-l-5"
                     aria-hidden="true"
                   ></i>
-                </a>
+                </span>
               </Link>
               <Link to="/">
-                <a className="txt2 ml-3 mr3" href="/">
+                <span className="txt2 ml-3 mr3" href="/">
                   Inicio
                   <i
                     className="fa fa-long-arrow-right m-l-15"
                     aria-hidden="true"
                   ></i>
-                </a>
+                </span>
               </Link>
             </div>
           </form>
