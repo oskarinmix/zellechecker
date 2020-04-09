@@ -27,6 +27,13 @@ const Login = ({ history }) => {
     if (validEmail) {
       try {
         await App.auth().signInWithEmailAndPassword(email, password);
+         Swal.fire({
+           position: "top-end",
+           icon: "success",
+           title: "Inicio de Sesión Exitoso",
+           showConfirmButton: false,
+           timer: 1500,
+         });
         history.push("/dashboard");
       } catch (error) {
         Swal.fire("Correo o Password Incorrecto", error, "error");
