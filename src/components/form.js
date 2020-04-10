@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import firebase from "firebase/app";
 import "firebase/firestore";
+import "firebase/storage";
 import Swal from "sweetalert2";
 const Form = () => {
   const [email, setEmail] = useState("");
@@ -8,7 +9,39 @@ const Form = () => {
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState("");
   const [sender, setSender] = useState("");
-  useEffect(() => {}, []);
+  const [file, setFile] = useState("");
+  const [percentage, setPercentage] = useState(0);
+  const [picture, setPicture] = useState("");
+  const [description, setDescription] = useState("");
+
+  const handleCapture = (e) => {
+    const file = e.target.files[0];
+    setFile(file);
+    const ind = file.name.lastIndexOf(".");
+    const name = file.name.slice(0, file.name.lastIndexOf("."));
+    const ext = file.name.slice(ind);
+    const storageRef = firebase
+      .storage()
+      .ref(`captures/${name}-${Date.now()}${ext}`);
+    const task = storageRef.put(file);
+
+    task.on(
+      "state_changed",
+      (snapshot) => {
+        let per = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setPercentage(per);
+      },
+      (error) => {
+        console.log(error.message);
+      },
+      () => {
+        storageRef.getDownloadURL().then((url) => {
+          setPicture(url);
+          setPercentage(100);
+        });
+      }
+    );
+  };
 
   const isAValidForm = () => {
     return (
@@ -16,7 +49,9 @@ const Form = () => {
       sender.length > 0 &&
       amount.length > 0 &&
       ref.length > 0 &&
-      date.length > 0
+      date.length > 0 &&
+      picture.length > 0 &&
+      description.length > 0
     );
   };
 
@@ -45,6 +80,8 @@ const Form = () => {
       ref: ref,
       type: "deposit",
       status: "unverified",
+      description: description,
+      picUrl: picture,
       created_at: new Date().toUTCString(),
     };
     if (validateRegex()) {
@@ -57,6 +94,9 @@ const Form = () => {
         setRef("");
         setAmount("");
         setDate("");
+        setPicture("");
+        setPercentage("");
+        setFile("");
       } catch (error) {
         Swal.fire("Registro Guardado Fallido!", error, "error");
       }
@@ -159,6 +199,60 @@ const Form = () => {
             <span className="symbol-input100">
               <i className="fa fa-calendar" aria-hidden="true"></i>
             </span>
+          </div>
+
+          <div className="wrap-input100">
+            <textarea
+              className="input100"
+              type="textArea"
+              value={description}
+              max={Date.now()}
+              autoComplete="off"
+              placeholder="Agrega una Descripción"
+              onChange={(e) => {
+                setDescription(e.target.value);
+              }}
+            />
+            <span className="focus-input100"></span>
+            <span className="symbol-input100">
+              <i className="fa fa-comments" aria-hidden="true"></i>
+            </span>
+          </div>
+
+          <div className="wrap-input100 d-flex justify-content-center mt-2">
+            <label
+              htmlFor="file-upload"
+              className="custom-file-upload badge badge-primary"
+              style={{
+                border: "1px solid #ccc",
+                display: "inline-block",
+                padding: "6px 12px",
+                cursor: "pointer",
+              }}
+              disabled={`${percentage !== 0 ? "true" : false}`}
+            >
+              {file ? (
+                <i className="fa fa-check" style={{ color: "green" }}></i>
+              ) : (
+                <i className="fa fa-cloud-upload"></i>
+              )}
+              <span> Subir Captura</span>
+              {percentage > 0 ? <span> {percentage.toFixed(2)}%</span> : ""}
+            </label>
+            <input
+              id="file-upload"
+              className="input100"
+              type="file"
+              autoComplete="off"
+              onChange={(e) => {
+                handleCapture(e);
+              }}
+              style={{ display: "none" }}
+            />
+            {/*<span className="focus-input100"></span>
+            <span className="symbol-input100">
+              <i className="fa fa-file" aria-hidden="true"></i>
+            </span>*/}
           </div>
 
           <div className="container-login100-form-btn">
