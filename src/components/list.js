@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import firebase from "firebase/app";
 import "firebase/firestore";
-
+import { Link } from "react-router-dom";
 import Spinner from "./spinner";
 const Form = () => {
   const [transactions, setTransactions] = useState(null);
@@ -49,6 +49,7 @@ const Form = () => {
                   <th scope="col">Envia :</th>
                   <th scope="col">Monto</th>
                   <th scope="col">Status</th>
+                  <th scope="col">Acciones</th>
                 </tr>
               </thead>
               <tbody>
@@ -61,12 +62,35 @@ const Form = () => {
                       <td>{t.amount}$</td>
                       <td>
                         {t.status === "verified" ? (
-                          <span className="badge badge-success"> Verificada </span>
+                          <span className="badge badge-success">
+                            Verificada
+                          </span>
                         ) : t.status === "unverified" ? (
                           <span className="badge badge-warning">Pendiente</span>
                         ) : (
                           <span className="badge badge-danger">Rechazada</span>
                         )}
+                      </td>
+                      <td align="center">
+                        <a
+                          href={t.picUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="badge badge-primary mr-2"
+                        >
+                          <i className="fa fa-camera" aria-hidden="true"></i>{" "}
+                          <i className="fa fa-download" aria-hidden="true"></i>{" "}
+                          <span> Capture</span>
+                        </a>
+                        <Link to={`/dashboard/details/${t.id}`}>
+                          <span style={{ color: "white" }}>
+                            <i
+                              className="fa fa-info"
+                              style={{ color: "white" }}
+                            ></i>{" "}
+                            Ver Detalles
+                          </span>
+                        </Link>
                       </td>
                     </tr>
                   );

@@ -3,44 +3,26 @@ import firebase from "firebase/app";
 import "firebase/firestore";
 import "firebase/storage";
 import Swal from "sweetalert2";
+import useStorage from "../hooks/useStorage";
 const Form = () => {
+  const {
+    picture,
+    percentage,
+    uploadFile,
+    setPicture,
+    setPercentage,
+  } = useStorage();
   const [email, setEmail] = useState("");
   const [ref, setRef] = useState("");
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState("");
   const [sender, setSender] = useState("");
-  const [file, setFile] = useState("");
-  const [percentage, setPercentage] = useState(0);
-  const [picture, setPicture] = useState("");
   const [description, setDescription] = useState("");
 
   const handleCapture = (e) => {
+    setPercentage(1);
     const file = e.target.files[0];
-    setFile(file);
-    const ind = file.name.lastIndexOf(".");
-    const name = file.name.slice(0, file.name.lastIndexOf("."));
-    const ext = file.name.slice(ind);
-    const storageRef = firebase
-      .storage()
-      .ref(`captures/${name}-${Date.now()}${ext}`);
-    const task = storageRef.put(file);
-
-    task.on(
-      "state_changed",
-      (snapshot) => {
-        let per = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setPercentage(per);
-      },
-      (error) => {
-        console.log(error.message);
-      },
-      () => {
-        storageRef.getDownloadURL().then((url) => {
-          setPicture(url);
-          setPercentage(100);
-        });
-      }
-    );
+    uploadFile(file);
   };
 
   const isAValidForm = () => {
@@ -50,7 +32,7 @@ const Form = () => {
       amount.length > 0 &&
       ref.length > 0 &&
       date.length > 0 &&
-      picture.length > 0 &&
+      picture !== null &&
       description.length > 0
     );
   };
@@ -70,8 +52,15 @@ const Form = () => {
     );
   };
   const guardarTransaccion = async (e) => {
-    console.log("Enviando Los Datos");
     e.preventDefault();
+    if (picture === null) {
+      Swal.fire(
+        "Debe Adjuntar una Captura de la Operación",
+        "Por favor adjunte un screenshot de la transacción",
+        "error"
+      );
+    }
+
     const obj = {
       amount: amount,
       sender: sender,
@@ -96,7 +85,7 @@ const Form = () => {
         setDate("");
         setPicture("");
         setPercentage("");
-        setFile("");
+        setDescription("");
       } catch (error) {
         Swal.fire("Registro Guardado Fallido!", error, "error");
       }
@@ -202,9 +191,9 @@ const Form = () => {
           </div>
 
           <div className="wrap-input100">
-            <textarea
+            <input
               className="input100"
-              type="textArea"
+              type="text"
               value={description}
               max={Date.now()}
               autoComplete="off"
@@ -222,22 +211,37 @@ const Form = () => {
           <div className="wrap-input100 d-flex justify-content-center mt-2">
             <label
               htmlFor="file-upload"
-              className="custom-file-upload badge badge-primary"
+              className={
+                percentage !== 100
+                  ? "custom-file-upload badge badge-primary"
+                  : "custom-file-upload badge badge-success"
+              }
               style={{
                 border: "1px solid #ccc",
                 display: "inline-block",
                 padding: "6px 12px",
                 cursor: "pointer",
               }}
-              disabled={`${percentage !== 0 ? "true" : false}`}
+              disabled={percentage !== 0 ? true : false}
             >
-              {file ? (
+              {picture ? (
                 <i className="fa fa-check" style={{ color: "green" }}></i>
               ) : (
                 <i className="fa fa-cloud-upload"></i>
               )}
-              <span> Subir Captura</span>
-              {percentage > 0 ? <span> {percentage.toFixed(2)}%</span> : ""}
+
+              <span>
+                {percentage > 0 && percentage < 100
+                  ? "    Subiendo"
+                  : percentage === 100
+                  ? "  "
+                  : `    Subir Capture`}
+              </span>
+              {percentage > 0 ? (
+                <span> {` ${percentage.toFixed(2)} %`}</span>
+              ) : (
+                ""
+              )}
             </label>
             <input
               id="file-upload"
@@ -249,10 +253,6 @@ const Form = () => {
               }}
               style={{ display: "none" }}
             />
-            {/*<span className="focus-input100"></span>
-            <span className="symbol-input100">
-              <i className="fa fa-file" aria-hidden="true"></i>
-            </span>*/}
           </div>
 
           <div className="container-login100-form-btn">

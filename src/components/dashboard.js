@@ -1,9 +1,9 @@
 import React from "react";
-import { Route, Switch, Link } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 import List from "./list";
 import Form from "./form";
-import App from "../auth/auth";
-import logoZelle from "../assets/img/logo.png";
+import Navbar from "./navbar";
+import Details from "./details";
 const Dashbord = () => {
   // const [docs, setDocs] = useState([]);
   // const [doc, setDoc] = useState(null);
@@ -83,12 +83,15 @@ const Dashbord = () => {
 
   return (
     <>
-      <div
+      <Navbar></Navbar>
+      {/*f<div
         className="bg-light d-flex justify-content-around align-items-center"
         style={{ height: "100px", width: "100%" }}
       >
-        <div className="d-flex align-items-center"><img src={logoZelle} alt="logo" style={{ height: "50px" }}></img>
-        <h3 className="m-l-10"> Dashboard - Zelle Checker</h3></div>
+        <div className="d-flex align-items-center">
+          <img src={logoZelle} alt="logo" style={{ height: "50px" }}></img>
+          <h3 className="m-l-10"> Dashboard - Zelle Checker</h3>
+        </div>
         <div className="d-flex justify-content-around" style={{ width: "30%" }}>
           <button type="button" className="btn-btn-primary">
             <Link to="/dashboard/form">Agregar Transacción </Link>
@@ -104,9 +107,10 @@ const Dashbord = () => {
             Logout
           </button>
         </div>
-      </div>
+      </div>*/}
       <Switch>
         <Route path="/dashboard/form" component={Form}></Route>
+        <Route path="/dashboard/details/:id" component={Details}></Route>
         <Route path="/dashboard/" component={List}></Route>
       </Switch>
     </>
@@ -114,22 +118,3 @@ const Dashbord = () => {
 };
 
 export default Dashbord;
-// <button onClick={() => App.auth().signOut()}>Sign out</button>
-//       <button className="btn btn-primary" onClick={guardarTransaccion}>
-//         Guardar Transaccion
-//       </button>
-//       <button className="btn btn-primary" onClick={consultarTransacciones}>
-//         consultar Transaccion
-//       </button>
-//       <button
-//         className="btn btn-primary"
-//         onClick={(id) => consultarDoc("2DW0yL1sxtqeoYs6hvDr")}
-//       >
-//         ID Transaccion
-//       </button>
-//       <button
-//         className="btn btn-primary"
-//         onClick={(id) => borrarElement("KnoxGqzfWg7CxrgCvxrd")}
-//       >
-//         Del Transaccion
-//       </button>
